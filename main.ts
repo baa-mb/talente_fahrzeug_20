@@ -4,15 +4,21 @@ input.onButtonPressed(Button.A, function () {
 serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
 	
 })
-input.onButtonPressed(Button.B, function () {
-    lauf_flag = 0
-    robotbit.MotorRun(robotbit.Motors.M1A, 106)
-    robotbit.MotorRun(robotbit.Motors.M1B, 106)
-})
-radio.onReceivedValue(function (name, value) {
-    info = name
-    wert = value
-    if (info == "roll") {
+// if (info == "TB") {
+// if (wert == 1) {
+// control.raiseEvent(
+// EventBusSource.MICROBIT_ID_BUTTON_B,
+// EventBusValue.MICROBIT_BUTTON_EVT_CLICK
+// )
+// } else {
+// control.raiseEvent(
+// EventBusSource.MICROBIT_ID_BUTTON_A,
+// EventBusValue.MICROBIT_BUTTON_EVT_CLICK
+// )
+// }
+// }
+radio.onReceivedValue(function (info, wert) {
+    if (info == "kurve") {
         // basic.showNumber(wert)
         rawSeit = Math.max(-45, Math.min(45, wert))
         mappedSeit = Math.map(rawSeit, -45, 45, -255, 255)
@@ -20,7 +26,7 @@ radio.onReceivedValue(function (name, value) {
         seitLeft = mappedSeit
         seitRight = mappedSeit * -1
     }
-    if (info == "pitch") {
+    if (info == "gerade") {
         rawPitch = Math.max(-45, Math.min(45, wert))
         mappedPitch = Math.map(rawPitch, -45, 45, -255, 255)
         pitchLeft = mappedPitch
@@ -38,19 +44,9 @@ radio.onReceivedValue(function (name, value) {
             }
         }
     }
-    if (info == "TB") {
-        if (wert == 1) {
-            control.raiseEvent(
-            EventBusSource.MICROBIT_ID_BUTTON_B,
-            EventBusValue.MICROBIT_BUTTON_EVT_CLICK
-            )
-        } else {
-            control.raiseEvent(
-            EventBusSource.MICROBIT_ID_BUTTON_A,
-            EventBusValue.MICROBIT_BUTTON_EVT_CLICK
-            )
-        }
-    }
+})
+input.onButtonPressed(Button.B, function () {
+    lauf_flag = 0
 })
 let rightOutput = 0
 let leftOutput = 0
@@ -62,12 +58,10 @@ let seitRight = 0
 let seitLeft = 0
 let mappedSeit = 0
 let rawSeit = 0
-let wert = 0
-let info = ""
 let lauf_flag = 0
-let Platzhalter2 = 0
-let Platzhalter = 0
-radio.setGroup(3)
+radio.setGroup(26)
 lauf_flag = 0
 basic.showIcon(IconNames.Diamond)
 robotbit.MotorStopAll()
+robotbit.MotorRun(robotbit.Motors.M2B, 70)
+robotbit.MotorRun(robotbit.Motors.M1A, 70)
