@@ -2,7 +2,7 @@ input.onButtonPressed(Button.A, function () {
     lauf_flag = 1
 })
 serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
-
+	
 })
 input.onButtonPressed(Button.B, function () {
     lauf_flag = 0
@@ -10,9 +10,8 @@ input.onButtonPressed(Button.B, function () {
     robotbit.MotorRun(robotbit.Motors.M1B, 106)
 })
 radio.onReceivedValue(function (name, value) {
-    let info = name
-    let wert = value
-
+    info = name
+    wert = value
     if (info == "roll") {
         // basic.showNumber(wert)
         rawSeit = Math.max(-45, Math.min(45, wert))
@@ -35,24 +34,23 @@ radio.onReceivedValue(function (name, value) {
                 robotbit.MotorRun(robotbit.Motors.M1A, leftOutput)
             }
             if (rightOutput < 0) {
-                robotbit.MotorRun(robotbit.Motors.M1B, rightOutput)
+                robotbit.MotorRun(robotbit.Motors.M2B, rightOutput)
             }
         }
-   }
+    }
     if (info == "TB") {
         if (wert == 1) {
             control.raiseEvent(
-                EventBusSource.MICROBIT_ID_BUTTON_B,
-                EventBusValue.MICROBIT_BUTTON_EVT_CLICK
+            EventBusSource.MICROBIT_ID_BUTTON_B,
+            EventBusValue.MICROBIT_BUTTON_EVT_CLICK
             )
         } else {
             control.raiseEvent(
-                EventBusSource.MICROBIT_ID_BUTTON_A,
-                EventBusValue.MICROBIT_BUTTON_EVT_CLICK
+            EventBusSource.MICROBIT_ID_BUTTON_A,
+            EventBusValue.MICROBIT_BUTTON_EVT_CLICK
             )
         }
     }
-
 })
 let rightOutput = 0
 let leftOutput = 0
@@ -64,10 +62,11 @@ let seitRight = 0
 let seitLeft = 0
 let mappedSeit = 0
 let rawSeit = 0
-
+let wert = 0
+let info = ""
 let lauf_flag = 0
-let Platzhalter = 0
 let Platzhalter2 = 0
+let Platzhalter = 0
 radio.setGroup(3)
 lauf_flag = 0
 basic.showIcon(IconNames.Diamond)
