@@ -19,28 +19,27 @@ serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
 // }
 radio.onReceivedValue(function (info, wert) {
     if (info == "kurve") {
-        // basic.showNumber(wert)
-        rawSeit = Math.max(-45, Math.min(45, wert))
-        mappedSeit = Math.map(rawSeit, -45, 45, -255, 255)
-        // basic.showNumber(mappedSeit)
-        seitLeft = mappedSeit
-        seitRight = mappedSeit * -1
+        kurve_get = wert
+        kurve_rad = Math.map(kurve_get, -45, 45, -255, 255)
+        // basic.showNumber(kurve_rad)
+        kurve_Left = kurve_rad
+        kurve_Right = kurve_rad * -1
     }
     if (info == "gerade") {
-        rawPitch = Math.max(-45, Math.min(45, wert))
-        mappedPitch = Math.map(rawPitch, -45, 45, -255, 255)
-        pitchLeft = mappedPitch
-        pitchRight = mappedPitch
-        leftOutput = (pitchLeft + seitLeft) / 2
-        rightOutput = (pitchRight + seitRight) / 2
-        if (rawPitch == 0 && rawSeit == 0) {
+        gerade_get = wert
+        gerade_rad = Math.map(gerade_get, -45, 45, -255, 255)
+        geradeLeft = gerade_rad
+        geradeRight = gerade_rad
+        leftOutput = (geradeLeft + kurve_Left) / 2
+        rightOutput = (geradeRight + kurve_Right) / 2
+        if (gerade_get == 0 && kurve_get == 0) {
             robotbit.MotorStopAll()
         } else {
             if (leftOutput < 0) {
-                robotbit.MotorRun(robotbit.Motors.M1A, leftOutput)
+                robotbit.MotorRun(motor_links, leftOutput)
             }
             if (rightOutput < 0) {
-                robotbit.MotorRun(robotbit.Motors.M2B, rightOutput)
+                robotbit.MotorRun(motor_rechts, rightOutput)
             }
         }
     }
@@ -50,18 +49,22 @@ input.onButtonPressed(Button.B, function () {
 })
 let rightOutput = 0
 let leftOutput = 0
-let pitchRight = 0
-let pitchLeft = 0
-let mappedPitch = 0
-let rawPitch = 0
-let seitRight = 0
-let seitLeft = 0
-let mappedSeit = 0
-let rawSeit = 0
+let geradeRight = 0
+let geradeLeft = 0
+let gerade_rad = 0
+let gerade_get = 0
+let kurve_Right = 0
+let kurve_Left = 0
+let kurve_rad = 0
+let kurve_get = 0
 let lauf_flag = 0
 radio.setGroup(26)
 lauf_flag = 0
 basic.showIcon(IconNames.Diamond)
+
+let motor_links = robotbit.Motors.M1A
+let motor_rechts = robotbit.Motors.M2B
+
 robotbit.MotorStopAll()
-robotbit.MotorRun(robotbit.Motors.M2B, 70)
-robotbit.MotorRun(robotbit.Motors.M1A, 70)
+robotbit.MotorRun(motor_rechts, 70)
+robotbit.MotorRun(motor_links, 70)
