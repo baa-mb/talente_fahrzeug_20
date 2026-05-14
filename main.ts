@@ -19,25 +19,9 @@ radio.onReceivedValue(function (info, wert) {
     if (info == "kurve") {
         kurve_get = wert
         kurve_rad = Math.round(Math.map(kurve_get, -45, 45, -255, 255))
-        // basic.showNumber(kurve_rad)
-        kurve_links = kurve_rad
-        kurve_rechts = kurve_rad * -1
     } else if (info == "gerade") {
         gerade_get = wert
         gerade_rad = Math.round(Math.map(gerade_get, -45, 45, -255, 255))
-        gerade_links = gerade_rad
-        gerade_rechts = gerade_rad
-        links_rad = gerade_links + kurve_links
-        rechts_rad = gerade_rechts + kurve_rechts
-        if (gerade_get == 0 && kurve_get == 0) {
-            serial.writeLine("----------- stopp ----------------")
-            robotbit.MotorStopAll()
-        } else {
-            // serial.writeValue("links_rad", links_rad)
-            // serial.writeValue("rechts_rad", rechts_rad)
-            robotbit.MotorRun(motor_links, links_rad)
-            robotbit.MotorRun(motor_rechts, rechts_rad)
-        }
     }
 })
 input.onButtonPressed(Button.B, function () {
@@ -47,6 +31,10 @@ input.onButtonPressed(Button.B, function () {
 let gerade_get = 0, gerade_rad = 0, gerade_rechts = 0, gerade_links = 0
 let kurve_get = 0, kurve_rad = 0, kurve_rechts = 0, kurve_links = 0
 let links_rad = 0, rechts_rad = 0
+let links_ist = 0
+let rechts_ist = 0
+let links_soll = 0
+let rechts_soll = 0
 let lauf_flag = 0
 radio.setGroup(26)
 lauf_flag = 0
@@ -54,5 +42,38 @@ basic.showIcon(IconNames.Diamond)
 let motor_links = robotbit.Motors.M1A
 let motor_rechts = robotbit.Motors.M2B
 robotbit.MotorStopAll()
-robotbit.MotorRun(motor_rechts, 120)
-robotbit.MotorRun(motor_links, 120)
+basic.forever(function () {
+    gerade_links = gerade_rad
+    gerade_rechts = gerade_rad
+    kurve_links = kurve_rad
+    kurve_rechts = kurve_rad * -1
+    links_soll = gerade_links + kurve_links
+    rechts_soll = gerade_rechts + kurve_rechts
+    if (links_soll > 255) {
+        links_soll = 255
+    } else if (links_soll < -255) {
+        links_soll = -255
+    }
+    if (rechts_soll > 255) {
+        rechts_soll = 255
+    } else if (rechts_soll < -255) {
+        rechts_soll = -255
+    }
+    if (links_ist < links_soll) {
+        links_ist = Math.min(links_ist + 12, links_soll)
+    } else if (links_ist > links_soll) {
+        links_ist = Math.max(links_ist - 12, links_soll)
+    }
+    if (rechts_ist < rechts_soll) {
+        rechts_ist = Math.min(rechts_ist + 12, rechts_soll)
+    } else if (rechts_ist > rechts_soll) {
+        rechts_ist = Math.max(rechts_ist - 12, rechts_soll)
+    }
+    if (links_soll == 0 && rechts_soll == 0 && links_ist == 0 && rechts_ist == 0) {
+        robotbit.MotorStopAll()
+    } else {
+        robotbit.MotorRun(motor_links, links_ist)
+        robotbit.MotorRun(motor_rechts, rechts_ist)
+    }
+    basic.pause(30)
+})
